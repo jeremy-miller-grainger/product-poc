@@ -1,0 +1,17 @@
+<product>
+  <SKU variantOf="cbtgroup2">cbtsku5</SKU>
+  <productInformation localizedFor="en_US">
+    <title>Pink Ralph Lauren Polo Shirt, Petite Small</title>
+    <description>
+      <productDescription> Variation Level Description</productDescription>
+    </description>
+    <attribute name="Color">Pink</attribute>
+    <attribute name="Size (Women's)">PS</attribute>
+    <attribute name="Size Type">Petites</attribute>
+    <productID productIDType="EPID">72456</productID>
+    <conditionInfo>
+      <condition>New Other</condition>
+      <pictureURL>http://ebay.com/98357.JPG</pictureURL>
+    </conditionInfo>
+  </productInformation>
+</product>
