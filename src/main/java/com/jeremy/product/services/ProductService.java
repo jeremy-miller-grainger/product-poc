@@ -43,12 +43,10 @@ public class ProductService {
     priceRepository.save(price);
   }
 
-  public ProductResponse getProduct(final String productId) {
-    Product product = new Product();
-    Price price = new Price();
+  public ProductResponse getProduct() {
 
-    product = this.getProductFromXml();
-    price = this.getPriceForProduct(product.getProductInformation().getProductId());
+    Product product = this.getProductFromXml();
+    Price price = this.getPriceForProduct(product.getProductInformation().getProductId());
     product.getProductInformation().setPrice(price);
 
     return conversionService.convert(product, ProductResponse.class);

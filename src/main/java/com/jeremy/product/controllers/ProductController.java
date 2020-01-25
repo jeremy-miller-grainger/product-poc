@@ -22,7 +22,7 @@ public class ProductController {
 
   @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ProductResponse getProduct(@PathVariable final String id) {
-    ProductResponse productResponse = this.productService.getProduct(id);
+    ProductResponse productResponse = this.productService.getProduct();
 
     return productResponse;
   }
