@@ -54,5 +54,5 @@ This curl command should return the following response payload:
 }
 ```
 The product-poc is a proof of concept. There is only one product loaded into the pricing database at startup.
-There is only one product XML request loaded. Having said that, the product id given GET request path is ignored
+There is only one product XML request loaded. Having said that, the product id in the GET request path is ignored
 and the same content is returned for each request. 
