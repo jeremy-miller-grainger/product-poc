@@ -38,9 +38,10 @@ $> docker-compose up
 
 ## Using the product-poc service
 
+### Search for a product
 Once the product-poc service is running locally, you can test it with the following GET request:
 ```
-$> curl -i -H "Content-Type: application/json" -X GET http://localhost:8080/product/1
+$> curl -i -H "Content-Type: application/json" -X GET http://localhost:8080/product/72456
 ```
 This curl command should return the following response payload:
 ```json
@@ -55,4 +56,11 @@ This curl command should return the following response payload:
 ```
 The product-poc is a proof of concept. There is only one product loaded into the pricing database at startup.
 There is only one product XML request loaded. Having said that, the product id in the GET request path is ignored
-and the same content is returned for each request. 
+and the same content is returned for each request.
+
+### Update a product's price
+You can update the price for the product using a PUT request:
+```
+$> curl -H "Content-Type: application/json" -d '{"current_price":{"value":"33.99","currency_code":"USD"}}' -X PUT http://localhost:8080/product/72456
+```
+Use the GET request above to verify that the price was updated as expected.

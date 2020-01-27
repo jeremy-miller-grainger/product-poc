@@ -3,6 +3,8 @@ package com.jeremy.product.services;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.io.CharStreams;
 import com.jeremy.product.models.Price;
+import com.jeremy.product.models.PriceRequest;
+import com.jeremy.product.models.PriceResponse;
 import com.jeremy.product.models.Product;
 import com.jeremy.product.models.ProductResponse;
 import com.jeremy.product.repositories.PriceRepository;
@@ -46,15 +48,10 @@ public class ProductService {
   public ProductResponse getProduct() {
 
     Product product = this.getProductFromXml();
-    Price price = this.getPriceForProduct(product.getProductInformation().getProductId());
+    Price price = this.priceRepository.findByProductId(product.getProductInformation().getProductId());
     product.getProductInformation().setPrice(price);
 
     return conversionService.convert(product, ProductResponse.class);
-  }
-
-  Price getPriceForProduct(final String productId) {
-
-    return priceRepository.findByProductId(productId);
   }
 
   Product getProductFromXml() {
@@ -80,5 +77,17 @@ public class ProductService {
       xml = CharStreams.toString(reader);
     }
     return xml;
+  }
+
+  public PriceResponse updatePrice(String id, PriceRequest priceRequest) {
+
+    Price persistedPrice = this.priceRepository.findByProductId(id);
+    if (persistedPrice != null) {
+      Price price = conversionService.convert(priceRequest, Price.class);
+      persistedPrice.setValue(price.getValue());
+      persistedPrice.setCurrencyCode(price.getCurrencyCode());
+      priceRepository.save(persistedPrice);
+    }
+    return conversionService.convert(persistedPrice, PriceResponse.class);
   }
 }

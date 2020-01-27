@@ -2,12 +2,15 @@ package com.jeremy.product.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import com.jeremy.product.models.Attribute;
 import com.jeremy.product.models.ConditionInformation;
 import com.jeremy.product.models.Price;
+import com.jeremy.product.models.PriceRequest;
+import com.jeremy.product.models.PriceRequestValue;
 import com.jeremy.product.models.PriceResponse;
 import com.jeremy.product.models.Product;
 import com.jeremy.product.models.ProductResponse;
@@ -94,5 +97,57 @@ class ProductServiceTest {
     conditionInformation.setCondition(CONDITION);
     conditionInformation.setPictureUrl(PICTURE_URL);
     assertThat(result.getProductInformation().getConditionInformation()).isEqualTo(conditionInformation);
+  }
+
+  @Test
+  void updatePriceShouldReturnNullWhenNoProductExists() {
+    final String id = "id";
+    PriceRequestValue priceRequestValue = new PriceRequestValue();
+    priceRequestValue.setCurrencyCode("USD");
+    priceRequestValue.setValue("123.45");
+    PriceRequest priceRequest = new PriceRequest();
+    priceRequest.setPrice(priceRequestValue);
+
+    when(this.priceRepository.findByProductId(id)).thenReturn(null);
+
+    final PriceResponse result = this.productService.updatePrice(id, priceRequest);
+
+    assertThat(result).isNull();
+  }
+
+  @Test
+  void updatePriceShouldReturnUpdatedPriceWhenProductExists() {
+    final String id = "id";
+    PriceRequestValue priceRequestValue = new PriceRequestValue();
+    priceRequestValue.setCurrencyCode("USD");
+    priceRequestValue.setValue("123.45");
+    PriceRequest priceRequest = new PriceRequest();
+    priceRequest.setPrice(priceRequestValue);
+
+    Price persistedPrice = new Price();
+    persistedPrice.setCurrencyCode("CAD");
+    persistedPrice.setValue("543.21");
+    persistedPrice.setProductId(id);
+    persistedPrice.setId("999999");
+
+    Price convertedPriceRequest = new Price();
+    convertedPriceRequest.setCurrencyCode("USD");
+    convertedPriceRequest.setValue("123.45");
+
+    PriceResponse priceResponse = PriceResponse.builder()
+        .value("123.45")
+        .currencyCode("USD")
+        .build();
+
+    when(this.priceRepository.findByProductId(id)).thenReturn(persistedPrice);
+    when(this.conversionService.convert(priceRequest, Price.class)).thenReturn(convertedPriceRequest);
+    when(this.priceRepository.save(persistedPrice)).thenReturn(persistedPrice);
+    when(this.conversionService.convert(persistedPrice, PriceResponse.class)).thenReturn(priceResponse);
+
+    final PriceResponse result = this.productService.updatePrice(id, priceRequest);
+
+    verify(this.priceRepository).save(persistedPrice);
+    assertThat(result.getCurrencyCode()).isEqualTo(priceRequest.getPrice().getCurrencyCode());
+    assertThat(result.getValue()).isEqualTo(priceRequest.getPrice().getValue());
   }
 }
